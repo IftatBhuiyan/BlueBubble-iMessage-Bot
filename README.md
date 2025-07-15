@@ -22,6 +22,82 @@ An intelligent AI bot that can monitor and respond to iMessage conversations usi
 - **Ollama**: For local LLM model hosting
 - **Messages App**: Must be signed into iMessage
 
+## iMessage Bot Setup Guide
+
+A comprehensive checklist to create a dedicated, blue-bubble iMessage "bot" account on macOS and verify end-to-end connectivity.
+
+### 1. Create & Configure Your Bot Apple ID
+1. **Sign up** for a new Apple ID at https://appleid.apple.com—use it exclusively for your bot.
+2. **Enable Two-Factor Authentication** (required for iMessage).
+3. Under **"Reachable At"**, add and verify an email address (no phone number needed).
+
+### 2. Sign Into & Activate iMessage (Data-Only, No SMS)
+
+#### On an iPhone or iPad
+1. Open **Settings → Messages → Send & Receive**.
+2. Sign in with your bot Apple ID.
+3. Under **"You Can Be Reached By iMessage At"**, check your bot's email.
+4. Send a few test messages between that bot email and another iMessage account (e.g. your personal Apple ID).
+
+#### On macOS
+> **💡 Important**: For best results, consider using a **second Mac** or creating a **new macOS user account** with admin privileges. This prevents conflicts with your personal iMessage account and ensures clean separation.
+
+1. **If using a new Mac user**:
+   - Create a new user account with admin privileges
+   - Sign in to this new user account
+   - This ensures complete isolation from your personal iMessage setup
+
+2. **Configure iMessage**:
+   - Open **Messages → Settings → iMessage**.
+   - Sign in with the *same* bot Apple ID.
+   - Confirm your bot's email is listed and checked under **"You Can Be Reached By iMessage At."**
+   - In the macOS Messages app, send a test to your personal Apple ID—ensure you see a blue-bubble iMessage.
+
+3. **Confirm Two-Way Blue-Bubble Chat**:
+   - From your personal device, send a message to the bot's email-only address.
+   - Reply from the Mac UI and verify it arrives as a blue-bubble iMessage.
+
+### 3. Enable & Test Manual iMessage in the UI
+1. In the macOS Messages app, send and receive a few more back-and-forths to prove reliability.
+2. Make sure group chats, emojis, and attachments still behave as expected.
+
+### 4. Important Contact & Group Management
+1. **Add Contacts**: After sending messages to people, **add them as contacts** through the iMessage app on Mac. This ensures reliable chat identification.
+2. **Name Group Chats**: For group conversations, it's **highly recommended** to give groups proper names. Unnamed groups will fall back to participant-based identifiers which can be unreliable.
+
+### 5. Wire Up Your Automation Script
+1. Copy your sample AppleScript (e.g. `send_imessage()` in Python) into the project.
+2. Update to target your bot's service & buddy, for example:
+   ```applescript
+   tell application "Messages"
+     set targetService to 1st service whose service type = iMessage
+     set targetBuddy   to buddy "bot_email@domain.com" of targetService
+     send "Hello from my bot!" to targetBuddy
+   end tell
+   ```
+3. Run it once on the command line:
+   ```bash
+   osascript send_test_message.applescript
+   ```
+   —you should see that text arrive in Messages.
+
+### 6. Verify Incoming-Message Hooks
+1. Run your "read" script (either via AppleScript or by querying `~/Library/Messages/chat.db`).
+2. Confirm it logs every test message you send from your phone or another iMessage client.
+3. Iterate until parsing and filtering work reliably.
+
+### 7. Integrate Your AI Loop
+1. Plug `send_imessage()` and `read_recent_messages()` into your bot's main loop.
+2. Add console logs for "📨 Received…" and "✅ Sent…".
+3. Launch (`python run_dynamic_bot.py`) and watch your bot reply automatically in real time.
+
+### 8. Final Smoke-Tests
+- Send varied content (text, emojis, attachments, group-chat pings) to confirm graceful handling.
+- Monitor logs for errors or unhandled chat identifiers.
+- Tweak timeouts and error handling until the bot runs rock-solid overnight.
+
+---
+
 ## Installation
 
 1. **Clone the repository**:
